@@ -15,3 +15,18 @@
         dns_hostnames: yes
         dns_support: yes
       register: vpcout
+
+    - debug:
+        var: vpcout
+
+    - name: create public subnet in Zone1
+      ec2_vpc_subnet:
+        state: "{{state}}"
+        vpc_id: "{{vpcout.vpc.id}}"
+        region: "{{region}}"
+        az: "{{zone1}}"
+        cidr: "{{PubSub1Cidr}"
+        map_public: yes
+        tags:
+          Name: vprofile-pubsub1
+        register: pubsub1_out
