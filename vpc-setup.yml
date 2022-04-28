@@ -25,7 +25,7 @@
         vpc_id: "{{vpcout.vpc.id}}"
         region: "{{region}}"
         az: "{{zone1}}"
-        cidr: "{{PubSub1Cidr}"
+        cidr: "{{PubSub1Cidr}}"
         map_public: yes
         tags:
           Name: vprofile-pubsub1
