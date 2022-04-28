@@ -138,3 +138,50 @@
           - dest: 0.0.0.0/0
             gateway_id: "{{ NATGW_out.nat_gateway_id }}"
       register: privRT_out
+
+    - debug:
+        var: "{{item}}"
+      loop:
+        - vpcout.vpc.id
+        - pubsub1_out.subnet.id
+        - pubsub2_out.subnet.id
+        - pubsub3_out.subnet.id
+        - privsub1_out.subnet.id
+        - privsub2_out.subnet.id
+        - privsub3_out.subnet.id
+        - igw_out.gateway_id
+        - NATGW_out.nat_gateway_id
+        - pubRT_out.route_table.id
+        - privRT_out.route_table.id
+
+    - name: Setting host facts using key=value pairs, this format can only create strings or booleans
+      set_fact:
+        vpcid: "{{vpcout.vpc.id}}"
+        pubsub1id: "{{pubsub1_out.subnet.id}}"
+        pubsub2id: "{{pubsub2_out.subnet.id}}"
+        pubsub3id: "{{pubsub3_out.subnet.id}}"
+        privsub1id: "{{privsub1_out.subnet.id}}"
+        privsub2id: "{{privsub2_out.subnet.id}}"
+        privsub3id: "{{privsub3_out.subnet.id}}"
+        igwid: "{{igw_out.gateway_id}}"
+        pubRTid: "{{pubRT_out.route_table.id}}"
+        privRTid: "{{privRT_out.route_table.id}}"
+        NATGWid: "{{NATGW_out.nat_gateway_id}}"
+        cacheable: yes
+
+    - name: copy variables to a file for vpc output
+      copy:
+        content: "vpcid: {{vpcout.vpc.id}} \n
+        pubsub1id: {{pubsub1_out.subnet.id}}\n
+        pubsub2id: {{pubsub2_out.subnet.id}}\n
+        pubsub3id: {{pubsub3_out.subnet.id}}\n
+        privsub1id: {{privsub1_out.subnet.id}}\n
+        privsub2id: {{privsub2_out.subnet.id}}\n
+        privsub3id: {{privsub3_out.subnet.id}}\n
+        igwid: {{igw_out.gateway_id}}\n
+        pubRTid: {{pubRT_out.route_table.id}}\n
+        privRTid: {{privRT_out.route_table.id}}\n
+        NATGWid: {{NATGW_out.nat_gateway_id}}"
+        dest: vars/output_vars
+
+
