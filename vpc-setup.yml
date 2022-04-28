@@ -16,8 +16,8 @@
         dns_support: yes
       register: vpcout
 
-    - debug:
-        var: vpcout
+ #   - debug:
+ #       var: vpcout
 
     - name: create public subnet in Zone1
       ec2_vpc_subnet:
@@ -30,3 +30,63 @@
         tags:
           Name: vprofile-pubsub1
       register: pubsub1_out
+
+    - name: create public subnet in Zone2
+      ec2_vpc_subnet:
+        state: "{{state}}"
+        vpc_id: "{{vpcout.vpc.id}}"
+        region: "{{region}}"
+        az: "{{zone2}}"
+        cidr: "{{PubSub2Cidr}}"
+        map_public: yes
+        tags:
+          Name: vprofile-pubsub2
+      register: pubsub2_out
+
+    - name: create public subnet in Zone3
+      ec2_vpc_subnet:
+        state: "{{state}}"
+        vpc_id: "{{vpcout.vpc.id}}"
+        region: "{{region}}"
+        az: "{{zone3}}"
+        cidr: "{{PubSub3Cidr}}"
+        map_public: yes
+        tags:
+          Name: vprofile-pubsub3
+      register: pubsub3_out
+
+    - name: create private subnet in Zone1
+      ec2_vpc_subnet:
+        state: "{{state}}"
+        vpc_id: "{{vpcout.vpc.id}}"
+        region: "{{region}}"
+        az: "{{zone1}}"
+        cidr: "{{PrivSub1Cidr}}"
+        map_public: yes
+        tags:
+          Name: vprofile-privsub1
+      register: privsub1_out
+
+    - name: create private subnet in Zone2
+      ec2_vpc_subnet:
+        state: "{{state}}"
+        vpc_id: "{{vpcout.vpc.id}}"
+        region: "{{region}}"
+        az: "{{zone2}}"
+        cidr: "{{PrivSub2Cidr}}"
+        map_public: yes
+        tags:
+          Name: vprofile-privsub2
+      register: privsub2_out
+
+    - name: create private subnet in Zone3
+      ec2_vpc_subnet:
+        state: "{{state}}"
+        vpc_id: "{{vpcout.vpc.id}}"
+        region: "{{region}}"
+        az: "{{zone3}}"
+        cidr: "{{PrivSub3Cidr}}"
+        map_public: yes
+        tags:
+          Name: vprofile-privsub3
+      register: privsub3_out
