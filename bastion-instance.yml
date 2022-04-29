@@ -29,13 +29,14 @@
         region: "{{ region }}"
         rules:
           - proto: tcp
-            ports:
-              - 22
+            from_port: 22
+            to_port: 22
             cidr_ip: "{{ MYIP }}"
             rule_desc: allow MY ip on port 22
       register: bastionSG_out
 
-    - amazon.aws.ec2_instance:
+    - name: start bastion instance
+      amazon.aws.ec2_instance:
         key_name: bastion_keypair
         instance_type: t2.micro
         image_id: "{{bastion_ami}}"
