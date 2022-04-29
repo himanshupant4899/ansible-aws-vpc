@@ -49,3 +49,6 @@
         exact_count: 1
         security_group: "{{bastionSG_out.group_id}}"
       register: bastionHost_out
+
+    - debug:
+        var: bastionHost_out
