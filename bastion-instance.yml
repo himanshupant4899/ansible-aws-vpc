@@ -35,7 +35,7 @@
             rule_desc: allow MY ip on port 22
       register: bastionSG_out
 
-    - amazon.aws.ec2:
+    - amazon.aws.ec2_instance:
         key_name: vprofile-key
         instance_type: t2.micro
         image: "{{bastion_ami}}"
