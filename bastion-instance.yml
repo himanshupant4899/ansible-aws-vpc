@@ -36,7 +36,7 @@
       register: bastionSG_out
 
     - amazon.aws.ec2_instance:
-        key_name: vprofile-key
+        key_name: bastion_keypair
         instance_type: t2.micro
         image_id: "{{bastion_ami}}"
         region: "{{region}}"
