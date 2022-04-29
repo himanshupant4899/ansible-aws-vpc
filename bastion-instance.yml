@@ -36,10 +36,10 @@
       register: bastionSG_out
 
     - name: start bastion instance
-      amazon.aws.ec2_instance:
+      ec2:
         key_name: bastion_keypair
         instance_type: t2.micro
-        image_id: "{{bastion_ami}}"
+        image: "{{bastion_ami}}"
         region: "{{region}}"
         wait: yes
         wait_timeout: 300
@@ -50,7 +50,10 @@
           Name: "Bastion host"
           Project: "VProfile"
         exact_count: 1
-        security_group: "{{bastionSG_out.group_id}}"
+        count_tag:
+          Name: "Bastion host"
+          Project: "VProfile"
+        group_id: "{{bastionSG_out.group_id}}"
       register: bastionHost_out
 
     - debug:
