@@ -44,7 +44,7 @@
         wait: yes
         wait_timeout: 300
         vpc_subnet_id: "{{ pubsub1id }}"
-        tags:
+        instance_tags:
           Name: "Bastion host"
           Project: "VProfile"
         exact_count: 1
