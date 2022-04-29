@@ -11,7 +11,7 @@
         cidr_block: "{{vpcCidr}}"
         region: "{{region}}"
         state: "{{state}}"
-        tenancy: dedicated
+        tenancy: default
         dns_hostnames: yes
         dns_support: yes
       register: vpcout
