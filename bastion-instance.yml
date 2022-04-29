@@ -42,12 +42,9 @@
         wait: yes
         wait_timeout: 300
         vpc_subnet_id: "{{ pubsub1id }}"
-        instance_tags:
+        tags:
           Name: "Bastion host"
           Project: "VProfile"
         exact_count: 1
-        count_tag:
-          Name: "Bastion host"
-          Project: "VProfile"
-        group_id: "{{bastionSG_out.group_id}}"
+        security_group: "{{bastionSG_out.group_id}}"
       register: bastionHost_out
