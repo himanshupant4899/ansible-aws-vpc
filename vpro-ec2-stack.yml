@@ -22,3 +22,47 @@
         dest: "./vpro_loginkey.pem"
         mode: 0600
       when: vprokey_out.changed
+
+    - name: security group for Load Balancer
+      amazon.aws.ec2_group:
+         name: vprofile-ELB-sg
+         description: sg with rule descriptions
+         vpc_id: "{{ vpcid }}"
+         region: "{{ region }}"
+         rules:
+           - proto: tcp
+             from_port: 80
+             to_port: 80
+             cidr_ip: 0.0.0.0/0
+             rule_desc: allow MY ip on port 22
+      register: vprofileELB_out
+
+    - name: security group for Vprofile stack
+      amazon.aws.ec2_group:
+        name: vprofile-stack-sg
+        description: sg with rule descriptions
+        vpc_id: "{{ vpcid }}"
+        region: "{{ region }}"
+        purge_rules: no
+        rules:
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            group_id: "{{vprofileELB_out.group_id}}"
+
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            group_id: "{{ BastionSGid }}"
+
+      register: vprofilestackSG_out
+
+    - name: security group updated for inter communication
+      amazon.aws.ec2_group:
+        name: vprofile-stack-sg
+        vpc_id: "{{ vpcid }}"
+        region: "{{ region }}"
+        purge_rules: no
+        rules:
+          - proto: all
+            group_id: "{{ vprofilestackSG_out.group_id }}"
