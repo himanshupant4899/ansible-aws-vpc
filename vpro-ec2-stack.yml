@@ -66,3 +66,174 @@
         rules:
           - proto: all
             group_id: "{{ vprofilestackSG_out.group_id }}"
+
+    - name: Creating nginx web01
+      ec2:
+        key_name: vpro_keypair
+        instance_type: t2.micro
+        image: "{{nginx_ami}}"
+        region: "{{region}}"
+        wait: yes
+        wait_timeout: 300
+        vpc_subnet_id: "{{ privsub1id }}"
+        instance_tags:
+          Name: "web01 host"
+          Project: "VProfile"
+        exact_count: 1
+        count_tag:
+          Name: "web01 host"
+          Project: "VProfile"
+        group_id: "{{ vprofilestackSG_out.group_id }}"
+        register: web01_out
+
+    - name: Creating tomcat app01
+      ec2:
+        key_name: vpro_keypair
+        instance_type: t2.micro
+        image: "{{tomcat_ami}}"
+        region: "{{region}}"
+        wait: yes
+        wait_timeout: 300
+        vpc_subnet_id: "{{ privsub1id }}"
+        instance_tags:
+          Name: "app01 host"
+          Project: "VProfile"
+        exact_count: 1
+        count_tag:
+          Name: "app01 host"
+          Project: "VProfile"
+        group_id: "{{ vprofilestackSG_out.group_id }}"
+        register: web01_out
+
+    - name: Creating memcached mc01
+      ec2:
+        key_name: vpro_keypair
+        instance_type: t2.micro
+        image: "{{tomcat_ami}}"
+        region: "{{region}}"
+        wait: yes
+        wait_timeout: 300
+        vpc_subnet_id: "{{ privsub1id }}"
+        instance_tags:
+          Name: "mc01 host"
+          Project: "VProfile"
+        exact_count: 1
+        count_tag:
+          Name: "mc01 host"
+          Project: "VProfile"
+        group_id: "{{ vprofilestackSG_out.group_id }}"
+        register: mc01_out
+
+    - name: Creating rabbitMQ rmq01
+      ec2:
+        key_name: vpro_keypair
+        instance_type: t2.micro
+        image: "{{rmq_ami}}"
+        region: "{{region}}"
+        wait: yes
+        wait_timeout: 300
+        vpc_subnet_id: "{{ privsub1id }}"
+        instance_tags:
+          Name: "rmq01 host"
+          Project: "VProfile"
+        exact_count: 1
+        count_tag:
+          Name: "rmq01 host"
+          Project: "VProfile"
+        group_id: "{{ vprofilestackSG_out.group_id }}"
+        register: rmq01_out
+
+    - name: Creating mysql db01
+      ec2:
+        key_name: vpro_keypair
+        instance_type: t2.micro
+        image: "{{mysql_ami}}"
+        region: "{{region}}"
+        wait: yes
+        wait_timeout: 300
+        vpc_subnet_id: "{{ privsub1id }}"
+        instance_tags:
+          Name: "db01 host"
+          Project: "VProfile"
+        exact_count: 1
+        count_tag:
+          Name: "db01 host"
+          Project: "VProfile"
+        group_id: "{{ vprofilestackSG_out.group_id }}"
+        register: db01_out
+
+    - debug:
+        var: db01_out.tagged_instances[0].id
+
+    - amazon.aws.elb_classic_lb:
+        name: "vprofile-elb"
+        state: present
+        region: "{{region}}"
+        instance_ids: "{{web01_out.tagged_instances[0].id}}"
+        purge_instance_ids: true
+        security_group_ids: "{{vprofileELB_out.group_id}}"
+        subnets:
+          - "{{pubsub1id}}"
+          - "{{pubsub2id}}"
+          - "{{pubsub3id}}"
+        listeners:
+          - protocol: http # options are http, https, ssl, tcp
+            load_balancer_port: 80
+            instance_port: 80
+            proxy_protocol: True
+
+    - name: Insert/Update Hosts IP & Name in file
+      Blockinfile:
+        path: provision-stack/group_vars/hostsip
+        block: |
+          web01_ip: {{web01_out.tagged_instances[0].private_ip}}
+          app01_ip: {{app01_out.tagged_instances[0].private_ip}}
+          rmq01_ip: {{rmq01_out.tagged_instanmces[0].private-ip}}
+          mc01_ip: {{mc01_out.tagged_instanmces[0].private-ip}}
+          db01_ip: {{db01_out.tagged_instanmces[0].private-ip}}
+
+    - name: Copy login key to provision_stack directory
+      copy:
+        src: loginkey_vpro.pem
+        dest: provision-stack/loginkey_vpro.pem
+        mode: '0400'
+
+    - name: Insert/Update inventory file provision-stack/inventory-vpro
+      blockinfile:
+        path: provision-stack/inventory-vpro
+        block: |
+          web01 ansible_host: {{web01_out.tagged_instances[0].private_ip}}
+          app01 ansible_host: {{app01_out.tagged_instances[0].private_ip}}
+          rmq01 ansible_host: {{rmq01_out.tagged_instanmces[0].private-ip}}
+          mc01 ansible_host: {{mc01_out.tagged_instanmces[0].private-ip}}
+          db01 ansible_host: {{db01_out.tagged_instanmces[0].private-ip}}
+          cntl ansible_host: 127.0.0.1 ansible_connection=local
+          
+          [websrvgrp]
+          web01
+          
+          [appsrvgrp]
+          app01
+          
+          [rmqsrvgrp]
+          rmq01
+          
+          [mcsrvgrp]
+          mc01
+          
+          [dbsrvgrp]
+          db01
+          
+          [control]
+          cntl
+          
+          [stack_inst:children]
+          websrvgrp
+          appsrvgrp
+          rmqsrvgrp
+          mcsrvgrp
+          dbsrvgrp
+          
+          [stack_inst:vars]
+          ansible_user=ubuntu
+          ansible_ssh_private_key_file=vpro_loginkey.pem
