@@ -104,7 +104,7 @@
           Name: "app01 host"
           Project: "VProfile"
         group_id: "{{ vprofilestackSG_out.group_id }}"
-      register: web01_out
+      register: app01_out
 
     - name: Creating memcached mc01
       ec2:
