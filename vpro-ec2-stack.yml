@@ -189,9 +189,9 @@
         block: |
           web01_ip: {{web01_out.tagged_instances[0].private_ip}}
           app01_ip: {{app01_out.tagged_instances[0].private_ip}}
-          rmq01_ip: {{rmq01_out.tagged_instanmces[0].private-ip}}
-          mc01_ip: {{mc01_out.tagged_instanmces[0].private-ip}}
-          db01_ip: {{db01_out.tagged_instanmces[0].private-ip}}
+          rmq01_ip: {{rmq01_out.tagged_instances[0].private-ip}}
+          mc01_ip: {{mc01_out.tagged_instances[0].private-ip}}
+          db01_ip: {{db01_out.tagged_instances[0].private-ip}}
 
     - name: Copy login key to provision_stack directory
       copy:
@@ -205,9 +205,9 @@
         block: |
           web01 ansible_host: {{web01_out.tagged_instances[0].private_ip}}
           app01 ansible_host: {{app01_out.tagged_instances[0].private_ip}}
-          rmq01 ansible_host: {{rmq01_out.tagged_instanmces[0].private-ip}}
-          mc01 ansible_host: {{mc01_out.tagged_instanmces[0].private-ip}}
-          db01 ansible_host: {{db01_out.tagged_instanmces[0].private-ip}}
+          rmq01 ansible_host: {{rmq01_out.tagged_instances[0].private-ip}}
+          mc01 ansible_host: {{mc01_out.tagged_instances[0].private-ip}}
+          db01 ansible_host: {{db01_out.tagged_instances[0].private-ip}}
           cntl ansible_host: 127.0.0.1 ansible_connection=local
           
           [websrvgrp]
