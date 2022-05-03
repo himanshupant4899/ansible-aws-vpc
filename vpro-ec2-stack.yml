@@ -183,7 +183,7 @@
             proxy_protocol: True
 
     - name: Insert/Update Hosts IP & Name in file
-      Blockinfile:
+      blockinfile:
         path: provision-stack/group_vars/hostsip
         block: |
           web01_ip: {{web01_out.tagged_instances[0].private_ip}}
