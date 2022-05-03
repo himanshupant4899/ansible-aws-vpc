@@ -55,7 +55,7 @@
       register: bastionHost_out
 
     - name: Insert/update "BastionSGid" in vars/output_vars
-        blockinfile:
-          path: vars/output_vars
-          block: |
-            BastionSGid: "{{bastionSG_out.group_id}}"
+      blockinfile:
+        path: vars/output_vars
+        block: |
+          BastionSGid: "{{bastionSG_out.group_id}}"
