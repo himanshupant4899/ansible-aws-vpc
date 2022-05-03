@@ -60,6 +60,7 @@
     - name: security group updated for inter communication
       amazon.aws.ec2_group:
         name: vprofile-stack-sg
+        description: allow traffic from the sg to itself
         vpc_id: "{{ vpcid }}"
         region: "{{ region }}"
         purge_rules: no
