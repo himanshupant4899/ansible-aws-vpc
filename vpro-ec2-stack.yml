@@ -85,7 +85,7 @@
           Name: "web01 host"
           Project: "VProfile"
         group_id: "{{ vprofilestackSG_out.group_id }}"
-        register: web01_out
+      register: web01_out
 
     - name: Creating tomcat app01
       ec2:
@@ -104,7 +104,7 @@
           Name: "app01 host"
           Project: "VProfile"
         group_id: "{{ vprofilestackSG_out.group_id }}"
-        register: web01_out
+      register: web01_out
 
     - name: Creating memcached mc01
       ec2:
@@ -123,7 +123,7 @@
           Name: "mc01 host"
           Project: "VProfile"
         group_id: "{{ vprofilestackSG_out.group_id }}"
-        register: mc01_out
+      register: mc01_out
 
     - name: Creating rabbitMQ rmq01
       ec2:
@@ -142,7 +142,7 @@
           Name: "rmq01 host"
           Project: "VProfile"
         group_id: "{{ vprofilestackSG_out.group_id }}"
-        register: rmq01_out
+      register: rmq01_out
 
     - name: Creating mysql db01
       ec2:
@@ -161,7 +161,7 @@
           Name: "db01 host"
           Project: "VProfile"
         group_id: "{{ vprofilestackSG_out.group_id }}"
-        register: db01_out
+      register: db01_out
 
     - debug:
         var: db01_out.tagged_instances[0].id
